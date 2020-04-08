@@ -3,11 +3,20 @@ require("dotenv").config();
 var keys = require("./keys.js");
 var Spotify = require("node-spotify-api")
 var spotify = new Spotify(keys.spotify);
+var fs = require('fs');
 var moment = require("moment");
 
 
 var method = process.argv[2];
-var parameter = process.argv[3];
+var song = [];
+var parameter;
+for (var i = 3; i < process.argv.length; i++) {
+    song.push(process.argv[i]);
+}
+if (song !== parameter) {
+    parameter = song.join(" ");
+}
+
 
 switch (method) {
     case "concert-this":
@@ -27,25 +36,20 @@ switch (method) {
 
 }
 
-function BandsInTown(artist) {
-
-    var band = "";
-    for (var i = 3; i < process.argv.length; i++) {
-        band += process.argv[i];
+function BandsInTown(parameter) {
+    if (!parameter) {
+        parameter = "Foo Fighters";
     }
-    if (band !== artist) {
-        artist = band;
-    }
-    //console.log(artist);
+    //console.log(parameter);
 
-    axios.get("https://rest.bandsintown.com/artists/" + artist + "/events?app_id=codingbootcamp").then(
+    axios.get("https://rest.bandsintown.com/artists/" + parameter + "/events?app_id=codingbootcamp").then(
             function(response) {
 
                 var bandInfo = response.data;
 
                 bandInfo.forEach(function(info) {
                     console.log("Venue: " + info.venue.name);
-                    console.log("City: " + info.venue.city);
+                    console.log("City: " + info.venue.country + ", " + info.venue.city);
                     console.log("Date: " + moment(info.datetime).format('L'));
                 });
 
@@ -74,9 +78,49 @@ function BandsInTown(artist) {
 }
 
 function SpotifySong(parameter) {
+    if (!parameter) {
+        parameter = "The Sign";
+    }
+    console.log("\nTop 5 Search Results For: " + parameter + "\n");
+    spotify
+        .search({ type: 'track', query: parameter, limit: 5 })
+        .then(function(response) {
+            var music = response.tracks.items;
+            music.forEach(function(track) {
+                var artists = track.artists;
+                var musicianData = [];
+                artists.forEach(function(musician) {
+                        musicianData = [musician.name].join(", ");
+                    })
+                    //console.log(musicianData);
+                var url;
+                if (!track.preview_url) {
+                    url = "none provided";
+                } else {
+                    url = track.preview_url;
+                }
+
+                var songData = [
+                    "Artist(s): " + musicianData,
+                    "Song: " + track.name,
+                    "Album: " + track.album.name,
+                    "Preview Link: " + url
+                ].join("\n");
+
+                console.log(songData + "\n");
+            })
+        }).catch(function(err) {
+            console.log(err);
+        });
 
 }
 
 function OmdbInfo(parameter) {
+    if (!parameter) {
+        parameter = "Mr. Nobody";
+    }
+
+    //console.log(parameter);
+
 
 }
