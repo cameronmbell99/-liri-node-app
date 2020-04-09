@@ -6,18 +6,12 @@ var spotify = new Spotify(keys.spotify);
 var fs = require('fs');
 var moment = require("moment");
 
-
+//sets method to the second command line argument in the array
 var method = process.argv[2];
-var song = [];
-var parameter;
 
 //sets parameter to all the words after the command 
-for (var i = 3; i < process.argv.length; i++) {
-    song.push(process.argv[i]);
-}
-if (song !== parameter) {
-    parameter = song.join(" ");
-}
+var parameter = process.argv.slice(3).join(" ").toLowerCase();
+
 
 //calls the related function
 function liriApp(method, parameter) {
