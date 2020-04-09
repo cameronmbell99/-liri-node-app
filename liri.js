@@ -40,8 +40,9 @@ function BandsInTown(parameter) {
     if (!parameter) {
         parameter = "Foo Fighters";
     }
-    //console.log(parameter);
+    console.log("\nConcerts for this band: " + parameter + "\n");
 
+    //Runs a request with axios to the bandsintown API
     axios.get("https://rest.bandsintown.com/artists/" + parameter + "/events?app_id=codingbootcamp").then(
             function(response) {
 
@@ -50,7 +51,7 @@ function BandsInTown(parameter) {
                 bandInfo.forEach(function(info) {
                     console.log("Venue: " + info.venue.name);
                     console.log("City: " + info.venue.country + ", " + info.venue.city);
-                    console.log("Date: " + moment(info.datetime).format('L'));
+                    console.log("Date: " + moment(info.datetime).format('L') + "\n");
                 });
 
 
@@ -122,5 +123,49 @@ function OmdbInfo(parameter) {
 
     //console.log(parameter);
 
+
+    //Runs a request with axios to the omdb API
+    axios.get("http://www.omdbapi.com/?t=" + parameter + "&y=&plot=short&apikey=trilogy")
+        .then(function(response) {
+
+            var movieInfo = response.data;
+
+            var movieData = [
+                "Title: " + movieInfo.Title,
+                "Released: " + movieInfo.Year,
+                "IMDB Rating: " + movieInfo.imdbRating,
+                "Rotten Tomatoes Rating: ",
+                "Country: " + movieInfo.Country,
+                "Language(s): " + movieInfo.Language,
+                "Plot: " + movieInfo.Plot,
+                "Actors: " + movieInfo.Actors
+            ].join('\n');
+
+            console.log("\n" + movieData + "\n");
+
+        })
+        .catch(function(error) {
+            if (error.response) {
+                // The request was made and the server responded with a status code
+                // that falls out of the range of 2xx
+                console.log("---------------Data---------------");
+                console.log(error.response.data);
+                console.log("---------------Status---------------");
+                console.log(error.response.status);
+                console.log("---------------Status---------------");
+                console.log(error.response.headers);
+            } else if (error.request) {
+                // The request was made but no response was received
+                // `error.request` is an object that comes back with details pertaining to the error that occurred.
+                console.log(error.request);
+            } else {
+                // Something happened in setting up the request that triggered an Error
+                console.log("Error", error.message);
+            }
+            console.log(error.config);
+        });
+}
+
+function readRandom() {
 
 }
